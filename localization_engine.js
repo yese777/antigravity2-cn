@@ -218,34 +218,38 @@ function generateJs() {
                 const dataAuthor = curr.getAttribute('data-author');
                 if (dataAuthor && /^(user|human|client|customer|my)$/i.test(dataAuthor)) return true;
                 
-                // 阻断 ID 包含 chat, conversation, interactive 的容器
-                const id = curr.id || '';
-                if (typeof id === 'string') {
-                    const idLower = id.toLowerCase();
-                    if (idLower.includes('chat') || idLower.includes('conversation') || idLower.includes('interactive')) return true;
-                }
+                // 如果是 settings / preference / option 配置面板容器，且不是属性输入框/禁区标签，则不因 chat/conversation 等类名误阻断
+                const isSettingsContainer = (typeof className === 'string' && /setting|preference|option/i.test(className)) || 
+                                            (typeof id === 'string' && /setting|preference|option/i.test(id));
 
-                // 阻断 aria-label 包含 Chat, AI, Ask, conversation, interactive 的容器
-                const ariaLabel = curr.getAttribute('aria-label') || '';
-                if (ariaLabel) {
-                    const alLower = ariaLabel.toLowerCase();
-                    if (alLower.includes('chat') || alLower.includes('ai') || alLower.includes('ask') || alLower.includes('conversation') || alLower.includes('interactive')) return true;
-                }
-
-                const className = curr.className || '';
-                if (typeof className === 'string') {
-                    if (BLOCKED_CLASSES.some(cls => className.includes(cls))) return true;
-
-                    const clsLower = className.toLowerCase();
-                    // 阻断类名包含 chat, conversation, interactive 的容器
-                    if (clsLower.includes('chat') || clsLower.includes('conversation') || clsLower.includes('interactive')) return true;
-
-                    // 阻断各类用户/助理聊天消息气泡的变体
-                    if (/(^|\b|[-_])(user|human|client|customer|my|ai|bot|assistant)([-_]?(message|msg|bubble|query|chat|input|text|content))(\b|$)/i.test(className)) {
-                        return true;
+                if (!isSettingsContainer) {
+                    // 阻断 ID 包含 chat, conversation, interactive 的容器
+                    if (typeof id === 'string') {
+                        const idLower = id.toLowerCase();
+                        if (idLower.includes('chat') || idLower.includes('conversation') || idLower.includes('interactive')) return true;
                     }
-                    if (/(^|\b|[-_])(message|msg|bubble|query|chat|input|text|content)([-_]?(user|human|client|customer|my|ai|bot|assistant))(\b|$)/i.test(className)) {
-                        return true;
+
+                    // 阻断 aria-label 包含 Chat, AI, Ask, conversation, interactive 的容器
+                    const ariaLabel = curr.getAttribute('aria-label') || '';
+                    if (ariaLabel) {
+                        const alLower = ariaLabel.toLowerCase();
+                        if (alLower.includes('chat') || alLower.includes('ai') || alLower.includes('ask') || alLower.includes('conversation') || alLower.includes('interactive')) return true;
+                    }
+
+                    if (typeof className === 'string') {
+                        if (BLOCKED_CLASSES.some(cls => className.includes(cls))) return true;
+
+                        const clsLower = className.toLowerCase();
+                        // 阻断类名包含 chat, conversation, interactive 的容器
+                        if (clsLower.includes('chat') || clsLower.includes('conversation') || clsLower.includes('interactive')) return true;
+
+                        // 阻断各类用户/助理聊天消息气泡的变体
+                        if (/(^|\b|[-_])(user|human|client|customer|my|ai|bot|assistant)([-_]?(message|msg|bubble|query|chat|input|text|content))(\b|$)/i.test(className)) {
+                            return true;
+                        }
+                        if (/(^|\b|[-_])(message|msg|bubble|query|chat|input|text|content)([-_]?(user|human|client|customer|my|ai|bot|assistant))(\b|$)/i.test(className)) {
+                            return true;
+                        }
                     }
                 }
             }
@@ -292,7 +296,7 @@ function generateJs() {
                     // 对于 INPUT, TEXTAREA 和 SVG，虽然不翻译其子元素或内容，但需要翻译其 placeholder, title, aria-label 等属性
                     if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SVG') {
                         if (!isInBlockedZone(node.parentElement)) {
-                            for (const attr of ['placeholder', 'title', 'aria-label']) {
+                            for (const attr of ['placeholder', 'title', 'aria-label', 'data-tooltip', 'tooltip', 'data-title', 'aria-description']) {
                                 const v = node.getAttribute(attr);
                                 if (v) {
                                     const t = norm(v);
@@ -309,7 +313,7 @@ function generateJs() {
                 
                 // 2. 只有当确实不在禁区时，才翻译其属性
                 if (!isInBlockedZone(node)) {
-                    for (const attr of ['placeholder', 'title', 'aria-label']) {
+                    for (const attr of ['placeholder', 'title', 'aria-label', 'data-tooltip', 'tooltip', 'data-title', 'aria-description']) {
                         const v = node.getAttribute(attr);
                         if (v) {
                             const t = norm(v);
@@ -367,6 +371,20 @@ function generateJs() {
                     newVal = USE_TW ? "Cloud SQL 遠端 MCP 伺服器可讓您存取並執行 Cloud SQL 工具，用於管理 Cloud SQL 執行個體、管理使用者、建立和復原資料備份及資料庫維運。" : "Cloud SQL 远程 MCP 服务器可让您访问并运行 Cloud SQL 工具，用于管理 Cloud SQL 实例、管理用户、创建和恢复数据备份及数据库运维。";
                 } else if (/^The Spanner remote/i.test(valNorm)) {
                     newVal = USE_TW ? "Spanner 遠端 MCP 伺服器可讓您從 AI 開發環境中存取並執行 Spanner 工具，以建立、管理和查詢分散式資料庫資源。" : "Spanner 远程 MCP 服务器可让您从 AI 开发环境中访问并运行 Spanner 工具，以创建、管理和查询分布式数据库资源。";
+                } else if (/^Sends after agent finishes(?: working)?$/i.test(valNorm)) {
+                    newVal = USE_TW ? "智能體完成工作後發送" : "智能体完成工作后发送";
+                } else if (/^Sends after (?:current )?turn(?: completes)?$/i.test(valNorm)) {
+                    newVal = USE_TW ? "輪次完成後發送" : "轮次完成后发送";
+                } else if (/^Queue until after the (?:current )?turn\.?$/i.test(valNorm)) {
+                    newVal = USE_TW ? "在當前對話輪次結束後加入佇列。" : "在当前对话轮次结束后排队。";
+                } else if (/^Interrupt the agent and send immediately\.?$/i.test(valNorm)) {
+                    newVal = USE_TW ? "打斷智能體並立即發送。" : "打断智能体并立即发送。";
+                } else if (/^(?:to be installed|\s*to be installed)\.?\s*The browser subagent can be invoked/i.test(valNorm)) {
+                    newVal = USE_TW ? "。您可以透過在對話框中輸入 /browser 來呼叫瀏覽器子代理。" : "。您可以通过在对话框中输入 /browser 来调用浏览器子代理。";
+                } else if (/^Configure the browser subagent\.\s*It requires/i.test(valNorm)) {
+                    newVal = USE_TW ? "設定瀏覽器子代理。它需要安裝 " : "配置浏览器子代理。它需要安装 ";
+                } else if (/^Configure the browser subagent\.\s*It requires\s*Google Chrome\s*to be installed/i.test(valNorm)) {
+                    newVal = USE_TW ? "設定瀏覽器子代理。它需要安裝 Google Chrome。您可以透過在對話框中輸入 /browser 來呼叫瀏覽器子代理。" : "配置浏览器子代理。它需要安装 Google Chrome。您可以通过在对话框中输入 /browser 来调用浏览器子代理。";
                 } else if (/^Refreshes in (\d+) days?, (\d+) hours?$/i.test(valNorm)) {
                     newVal = valNorm.replace(/^Refreshes in (\d+) days?, (\d+) hours?$/i, (match, d, h) => {
                         return USE_TW ? (d + " 天 " + h + " 小時後更新") : (d + " 天 " + h + " 小时后刷新");
