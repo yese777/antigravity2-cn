@@ -450,5 +450,9 @@
     "Queue until after the current turn.": "在当前对话轮次结束后排队。",
     "Queue until after the current turn": "在当前对话轮次结束后排队",
     "Interrupt the agent and send immediately.": "打断智能体并立即发送。",
-    "Interrupt the agent and send immediately": "打断智能体并立即发送"
+    "Interrupt the agent and send immediately": "打断智能体并立即发送",
+    "Remote Control": "远程控制",
+    "Enable Remote Control": "启用远程控制",
+    "Try Remote Control": "体验远程控制",
+    "Kick off work on your desktop and keep steering your agents from your phone or another device. Open settings to enable Remote Control and get started.": "在桌面端开启工作，并通过手机或其他设备持续掌控您的智能体。打开设置以启用远程控制即可开始。"
 }
