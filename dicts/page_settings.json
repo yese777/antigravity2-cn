@@ -454,5 +454,7 @@
     "Remote Control": "远程控制",
     "Enable Remote Control": "启用远程控制",
     "Try Remote Control": "体验远程控制",
-    "Kick off work on your desktop and keep steering your agents from your phone or another device. Open settings to enable Remote Control and get started.": "在桌面端开启工作，并通过手机或其他设备持续掌控您的智能体。打开设置以启用远程控制即可开始。"
+    "Kick off work on your desktop and keep steering your agents from your phone or another device. Open settings to enable Remote Control and get started.": "在桌面端开启工作，并通过手机或其他设备持续掌控您的智能体。打开设置以启用远程控制即可开始。",
+    "Inherits General": "继承常规设置",
+    "Inherits your General settings when working in this project.": "在本项目中工作时继承您的常规设置。"
 }
