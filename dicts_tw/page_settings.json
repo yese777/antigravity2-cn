@@ -457,6 +457,10 @@
     "Try Remote Control": "體驗遠端控制",
     "Kick off work on your desktop and keep steering your agents from your phone or another device. Open settings to enable Remote Control and get started.": "在桌面端開啟工作，並透過手機或其他裝置持續掌控您的代理。開啟設定以啟用遠端控制即可開始。",
     "Inherits General": "繼承一般設定",
-    "Inherits your General settings when working in this project.": "在此專案中工作時繼承您的一般設定。"
+    "Inherits your General settings when working in this project.": "在此專案中工作時繼承您的一般設定。",
+    "Also includes": "還包括",
+    "when working in this project.": "在此專案中工作時。",
+    "Manage Antigravity app settings.": "管理 Antigravity 應用程式設定。",
+    "Automatically prompt you to restart the app when a new update is available. When disabled, you can check for updates manually from the app menu.": "當有可用更新時，自動提示您重新啟動應用程式。停用後，您可以透過應用程式選單手動檢查更新。"
 }
 
